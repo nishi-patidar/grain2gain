@@ -1,52 +1,65 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import {
   FaUser,
   FaEnvelope,
-  FaPhone,
   FaMapMarkerAlt,
   FaLock,
-  FaHandsHelping,
+  FaUniversity,
+  FaCity,
+  FaClipboardCheck
 } from 'react-icons/fa';
 
 export default function NGOSignUpPage() {
   const [formData, setFormData] = useState({
-    orgName: '',
-    contactPerson: '',
-    email: '',
-    phone: '',
-    location: '',
-    mission: '',
+    name: '',
+    darpanId: '',
     password: '',
+    state: '',
+    city: '',
+    email: '',
+    ngoType: '',
   });
 
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const isValid = Object.values(formData).every((field) => field.trim() !== '');
     if (!isValid) {
-      setSuccessMessage('Please fill in all fields.');
+      setSuccessMessage('');
+      setErrorMessage('Please fill in all fields.');
       return;
     }
 
-    console.log('NGO Form submitted:', formData);
-    setSuccessMessage('🎉 NGO registration successful! Welcome to Grain2Gain.');
+    try {
+      const response = await axios.post('http://localhost:8000/ngo/register', formData);
+      console.log('Server response:', response.data);
 
-    setFormData({
-      orgName: '',
-      contactPerson: '',
-      email: '',
-      phone: '',
-      location: '',
-      mission: '',
-      password: '',
-    });
+      setSuccessMessage('🎉 NGO registration successful! Please check your email to verify.');
+      setErrorMessage('');
+
+      setFormData({
+        name: '',
+        darpanId: '',
+        password: '',
+        state: '',
+        city: '',
+        email: '',
+        ngoType: '',
+      });
+    } catch (error) {
+      console.error('Error during signup:', error.response?.data || error.message);
+      setSuccessMessage('');
+      setErrorMessage(error.response?.data?.message || 'Something went wrong. Please try again.');
+    }
   };
 
   return (
@@ -60,14 +73,19 @@ export default function NGOSignUpPage() {
             {successMessage}
           </div>
         )}
+        {errorMessage && (
+          <div className="mb-4 text-center text-red-600 font-medium bg-red-100 border border-red-300 px-4 py-2 rounded-lg">
+            {errorMessage}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <InputField icon={<FaHandsHelping />} type="text" name="orgName" placeholder="Organization Name" value={formData.orgName} onChange={handleChange} />
-          <InputField icon={<FaUser />} type="text" name="contactPerson" placeholder="Contact Person" value={formData.contactPerson} onChange={handleChange} />
+          <InputField icon={<FaUser />} type="text" name="name" placeholder="NGO Name" value={formData.name} onChange={handleChange} />
+          <InputField icon={<FaClipboardCheck />} type="text" name="darpanId" placeholder="Darpan ID" value={formData.darpanId} onChange={handleChange} />
           <InputField icon={<FaEnvelope />} type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
-          <InputField icon={<FaPhone />} type="tel" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} />
-          <InputField icon={<FaMapMarkerAlt />} type="text" name="location" placeholder="Location" value={formData.location} onChange={handleChange} />
-          <InputField icon={<FaHandsHelping />} type="text" name="mission" placeholder="Mission Statement" value={formData.mission} onChange={handleChange} />
+          <InputField icon={<FaMapMarkerAlt />} type="text" name="state" placeholder="State" value={formData.state} onChange={handleChange} />
+          <InputField icon={<FaCity />} type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} />
+          <InputField icon={<FaUniversity />} type="text" name="ngoType" placeholder="Type of NGO" value={formData.ngoType} onChange={handleChange} />
           <InputField icon={<FaLock />} type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
 
           <button

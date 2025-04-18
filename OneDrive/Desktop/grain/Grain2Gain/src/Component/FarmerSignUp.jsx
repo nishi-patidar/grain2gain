@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// import {apiRequest} from "./utils/apiRequest.js";
 import {
   FaUser,
   FaEnvelope,
@@ -106,7 +107,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const response = await axios.post('http://localhost:5000/api/signup', {
+    const response = await apiRequest.post('/farmer/signup', {
       name,
       email,
       password,
