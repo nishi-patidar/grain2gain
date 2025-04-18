@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   FaUser,
   FaEnvelope,
   FaPhone,
   FaMapMarkerAlt,
+  FaStore,
+  FaBoxOpen,
   FaLock,
-  FaHandsHelping,
 } from 'react-icons/fa';
 
-export default function NGOSignUpPage() {
+export default function RetailerSignUpPage() {
+    const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    orgName: '',
+    storeName: '',
     contactPerson: '',
     email: '',
     phone: '',
     location: '',
-    mission: '',
+    businessType: '',
     password: '',
   });
 
@@ -35,16 +38,16 @@ export default function NGOSignUpPage() {
       return;
     }
 
-    console.log('NGO Form submitted:', formData);
-    setSuccessMessage('🎉 NGO registration successful! Welcome to Grain2Gain.');
+    console.log('Retailer Form submitted:', formData);
+    setSuccessMessage('🎉 Retailer registration successful! Welcome to Grain2Gain.');
 
     setFormData({
-      orgName: '',
+      storeName: '',
       contactPerson: '',
       email: '',
       phone: '',
       location: '',
-      mission: '',
+      businessType: '',
       password: '',
     });
   };
@@ -52,8 +55,8 @@ export default function NGOSignUpPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-green-200 to-green-50 p-4 sm:p-6">
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-3xl p-8 sm:p-10">
-        <h2 className="text-4xl font-bold text-center text-green-800 mb-2">NGO Sign-Up</h2>
-        <p className="text-center text-gray-500 mb-6">Partner with us to make a difference 🤝</p>
+        <h2 className="text-4xl font-bold text-center text-green-800 mb-2">Retailer Sign-Up</h2>
+        <p className="text-center text-gray-500 mb-6">Partner with Grain2Gain and stock fresh organic goods 🛒</p>
 
         {successMessage && (
           <div className="mb-4 text-center text-green-700 font-medium bg-green-100 border border-green-300 px-4 py-2 rounded-lg">
@@ -62,12 +65,12 @@ export default function NGOSignUpPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <InputField icon={<FaHandsHelping />} type="text" name="orgName" placeholder="Organization Name" value={formData.orgName} onChange={handleChange} />
+          <InputField icon={<FaStore />} type="text" name="storeName" placeholder="Store Name" value={formData.storeName} onChange={handleChange} />
           <InputField icon={<FaUser />} type="text" name="contactPerson" placeholder="Contact Person" value={formData.contactPerson} onChange={handleChange} />
           <InputField icon={<FaEnvelope />} type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
           <InputField icon={<FaPhone />} type="tel" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} />
           <InputField icon={<FaMapMarkerAlt />} type="text" name="location" placeholder="Location" value={formData.location} onChange={handleChange} />
-          <InputField icon={<FaHandsHelping />} type="text" name="mission" placeholder="Mission Statement" value={formData.mission} onChange={handleChange} />
+          <InputField icon={<FaBoxOpen />} type="text" name="businessType" placeholder="Business Type (e.g., Grocery, Supermarket)" value={formData.businessType} onChange={handleChange} />
           <InputField icon={<FaLock />} type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
 
           <button

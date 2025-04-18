@@ -1,5 +1,8 @@
+
+
 import React, { useState, useEffect } from 'react';
-import welcomeImage from '../assets/ppp.png';
+import welcomeImage from '../assets/pppp.jpg'
+
 import { useNavigate } from 'react-router-dom';
 
 function WelcomePage() {
@@ -28,16 +31,20 @@ function WelcomePage() {
     setIsModalOpen(false);
     console.log("Selected User Type:", userType);
 
-    // Routing based on the userType
     if (userType === 'NGO') {
-      navigate('/signUp'); // Navigate to the signUp page for NGOs
+      navigate('/ngosignUp');
     }
-    // You can handle other user types here (e.g., Retailer, Farmer)
+    if (userType === 'Farmer') {
+      navigate('/farmerSignUp');
+    }
+    if (userType === 'Retailer') {
+      navigate('/retailerSignup');
+    }
+    // Add more navigation logic here for other user types if needed
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-green-50 via-white to-emerald-50">
-      {/* Header with animation and glass effect when scrolled */}
       <header className={`fixed w-full z-40 transition-all duration-300 ${isScrolled ? "py-3 bg-white bg-opacity-90 backdrop-blur-md shadow-lg" : "py-6 bg-transparent"}`}>
         <div className="max-w-6xl mx-auto flex justify-between items-center px-6">
           <div className="flex items-center">
@@ -71,7 +78,6 @@ function WelcomePage() {
         </div>
       </header>
 
-      {/* Hero Section with animated entrance */}
       <section className={`pt-32 pb-20 px-4 transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -127,7 +133,6 @@ function WelcomePage() {
         </div>
       </section>
 
-      {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white/80 backdrop-blur-md rounded-2xl p-8 shadow-2xl max-w-sm w-full border border-gray-100 animate-scaleIn">
@@ -147,8 +152,9 @@ function WelcomePage() {
               </button>
             </div>
 
-            <div  className="flex flex-col gap-4 mb-6">
-              {[{ type: "Retailer", description: "List and donate surplus food" },
+            <div className="flex flex-col gap-4 mb-6">
+              {[
+                { type: "Retailer", description: "List and donate surplus food" },
                 { type: "NGO", description: "Claim and distribute donations" },
                 { type: "Farmer", description: "Share fresh produce directly" }
               ].map((item) => (
