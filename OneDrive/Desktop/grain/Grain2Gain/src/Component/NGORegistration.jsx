@@ -9,6 +9,7 @@ import {
   FaCity,
   FaClipboardCheck
 } from 'react-icons/fa';
+import { Link } from 'react-router-dom'; // import Link for navigation
 
 export default function NGOSignUpPage() {
   const [formData, setFormData] = useState({
@@ -94,6 +95,14 @@ export default function NGOSignUpPage() {
           >
             Sign Up
           </button>
+
+          {/* Already have an account link */}
+          <p className="text-center text-sm text-gray-600 mt-2">
+            Already have an account?{' '}
+            <Link to="/ngosignIn" className="text-green-700 font-medium hover:underline">
+              Sign In
+            </Link>
+          </p>
         </form>
       </div>
     </div>

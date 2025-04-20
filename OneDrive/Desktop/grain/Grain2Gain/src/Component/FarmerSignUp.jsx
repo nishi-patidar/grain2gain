@@ -1,54 +1,78 @@
+import axios from 'axios';
 import React, { useState } from 'react';
-// import {apiRequest} from "./utils/apiRequest.js";
-import {
-  FaUser,
-  FaEnvelope,
-  FaPhone,
-  FaMapMarkerAlt,
-  FaSeedling,
-  FaLock,
-  FaTractor,
-} from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { FaUser, FaEnvelope, FaMapMarkerAlt, FaLock } from 'react-icons/fa';
 
 export default function FarmerSignupPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
-    phone: '',
-    location: '',
-    farmSize: '',
-    produceType: '',
+    email: '',
+    state: '',
+    city: '',
     password: '',
   });
 
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [otpError, setOtpError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic form validation
+    // Ensure all required fields are filled
     const isValid = Object.values(formData).every((field) => field.trim() !== '');
     if (!isValid) {
-      setSuccessMessage('Please fill in all fields.');
+      setSuccessMessage('');
+      setErrorMessage('Please fill in all fields.');
       return;
     }
 
-    console.log('Form submitted:', formData);
-    setSuccessMessage('🎉 Sign-up successful! Welcome to Grain2Gain.');
+    try {
+      const response = await axios.post('http://localhost:8000/farmer/register', formData);
 
-    // Reset form
-    setFormData({
-      name: '',
-      phone: '',
-      location: '',
-      farmSize: '',
-      produceType: '',
-      password: '',
-    });
+      if (response.data.message) {
+        setSuccessMessage('🎉 Farmer registration successful! OTP sent to email.');
+        setErrorMessage('');
+        setShowOtpModal(true); // Show OTP modal
+      }
+    } catch (error) {
+      console.error('Error during signup:', error.response?.data || error.message);
+      setSuccessMessage('');
+      setErrorMessage(error.response?.data?.message || 'Something went wrong. Please try again.');
+    }
+  };
+
+  const handleOtpChange = (e) => {
+    setOtp(e.target.value);
+  };
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post('http://localhost:8000/farmer/verify-otp', { email: formData.email, otp });
+
+      if (response.data.message) {
+        setSuccessMessage(response.data.message);
+        setOtpError('');
+        setShowOtpModal(false); // Close OTP modal after successful verification
+      }
+    } catch (error) {
+      console.error('Error during OTP verification:', error.response?.data || error.message);
+      setOtpError(error.response?.data?.message || 'Invalid or expired OTP.');
+    }
+  };
+
+  const redirectToLogin = () => {
+    navigate('/farmerlogin');
   };
 
   return (
@@ -62,13 +86,17 @@ export default function FarmerSignupPage() {
             {successMessage}
           </div>
         )}
+        {errorMessage && (
+          <div className="mb-4 text-center text-red-600 font-medium bg-red-100 border border-red-300 px-4 py-2 rounded-lg">
+            {errorMessage}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <InputField icon={<FaUser />} type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} />
-          <InputField icon={<FaPhone />} type="tel" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} />
-          <InputField icon={<FaMapMarkerAlt />} type="text" name="location" placeholder="Location" value={formData.location} onChange={handleChange} />
-          <InputField icon={<FaTractor />} type="number" name="farmSize" placeholder="Farm Size (acres)" value={formData.farmSize} onChange={handleChange} />
-          <InputField icon={<FaSeedling />} type="text" name="produceType" placeholder="Produce Type" value={formData.produceType} onChange={handleChange} />
+          <InputField icon={<FaEnvelope />} type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
+          <InputField icon={<FaMapMarkerAlt />} type="text" name="state" placeholder="State" value={formData.state} onChange={handleChange} />
+          <InputField icon={<FaMapMarkerAlt />} type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} />
           <InputField icon={<FaLock />} type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
 
           <button
@@ -77,13 +105,66 @@ export default function FarmerSignupPage() {
           >
             Sign Up
           </button>
+
+          <div className="text-center mt-4">
+            <p className="text-gray-600">Already have an account?</p>
+            <button
+              type="button"
+              onClick={redirectToLogin}
+              className="mt-2 w-full bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 font-medium py-2.5 rounded-xl transition duration-200"
+            >
+              Login
+            </button>
+          </div>
         </form>
       </div>
+
+      {/* OTP Modal */}
+      {showOtpModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg w-96 shadow-lg">
+            <h2 className="text-2xl font-bold text-center text-green-800 mb-4">Verify OTP</h2>
+
+            {otpError && (
+              <div className="mb-4 text-center text-red-600 font-medium bg-red-100 border border-red-300 px-4 py-2 rounded-lg">
+                {otpError}
+              </div>
+            )}
+
+            <form onSubmit={handleOtpSubmit} className="space-y-5">
+              <div className="relative">
+                <input
+                  type="text"
+                  name="otp"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={handleOtpChange}
+                  required
+                  className="pl-4 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-xl transition duration-200"
+              >
+                Verify OTP
+              </button>
+            </form>
+
+            <button
+              onClick={() => setShowOtpModal(false)}
+              className="mt-4 w-full text-center text-gray-500 hover:text-green-600 font-medium py-2"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// 💡 Reusable Input Field Component
 function InputField({ icon, type, name, placeholder, value, onChange }) {
   return (
     <div className="relative">
@@ -100,28 +181,3 @@ function InputField({ icon, type, name, placeholder, value, onChange }) {
     </div>
   );
 }
-
-import axios from 'axios';
-
-const handleSubmit = async (e) => {
-  e.preventDefault();
-
-  try {
-    const response = await apiRequest.post('/farmer/signup', {
-      name,
-      email,
-      password,
-      role: 'Farmer' // or NGO, Retailer
-    });
-
-    if (response.data.token) {
-      // ✅ Store token in localStorage
-      localStorage.setItem('token', response.data.token);
-
-      // Optional: Navigate or decode immediately
-      navigate('/dashboard'); // or wherever you want to go
-    }
-  } catch (err) {
-    console.error(err);
-  }
-};

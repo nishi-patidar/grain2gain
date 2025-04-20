@@ -1,67 +1,81 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+// import welcomeImage from "../assets/pppp.png"; // Ensure this path is correct
 
-
-import React, { useState, useEffect } from 'react';
-import welcomeImage from '../assets/pppp.jpg'
-
-import { useNavigate } from 'react-router-dom';
-
-function WelcomePage() {
+const WelcomePage = () => {
   const navigate = useNavigate();
+
+  // State to control the modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // State to track if the page has been scrolled
   const [isScrolled, setIsScrolled] = useState(false);
+
+  // State for fade-in animation when the component loads
   const [isVisible, setIsVisible] = useState(false);
 
+  // useEffect for scroll detection and fade-in animation
   useEffect(() => {
+    // Function to handle scroll event
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
 
+    // Timer to trigger fade-in effect
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 100);
 
-    window.addEventListener('scroll', handleScroll);
+    // Add scroll event listener
+    window.addEventListener("scroll", handleScroll);
+
+    // Clean up listeners on unmount
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
       clearTimeout(timer);
     };
   }, []);
 
+  // Handle user type selection from modal
   const handleUserTypeSelect = (userType) => {
     setIsModalOpen(false);
     console.log("Selected User Type:", userType);
 
-    if (userType === 'NGO') {
-      navigate('/ngosignUp');
+    // Redirect user based on selected type
+    if (userType === "NGO") {
+      navigate("/ngosignUp");
     }
-    if (userType === 'Farmer') {
-      navigate('/farmerSignUp');
+    if (userType === "Farmer") {
+      navigate("/farmerSignUp");
     }
-    if (userType === 'Retailer') {
-      navigate('/retailerSignup');
+    if (userType === "Retailer") {
+      navigate("/retailerSignup");
     }
-    // Add more navigation logic here for other user types if needed
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-green-50 via-white to-emerald-50">
-      <header className={`fixed w-full z-40 transition-all duration-300 ${isScrolled ? "py-3 bg-white bg-opacity-90 backdrop-blur-md shadow-lg" : "py-6 bg-transparent"}`}>
+      {/* Navbar */}
+      <header className="fixed w-full z-40 py-6 bg-white bg-opacity-90 backdrop-blur-md shadow-lg">
         <div className="max-w-6xl mx-auto flex justify-between items-center px-6">
+          {/* Logo and Title */}
           <div className="flex items-center">
             <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-400 rounded-lg mr-3 shadow-lg transform rotate-45">
               <div className="w-full h-full flex items-center justify-center transform -rotate-45">
                 <span className="text-white font-bold text-xl">G2G</span>
               </div>
             </div>
-            <h1 className={`font-extrabold tracking-tight transition-all ${isScrolled ? "text-emerald-700 text-2xl" : "text-emerald-600 text-3xl"}`}>Grain2Gain</h1>
+            <h1 className="font-extrabold tracking-tight text-emerald-600 text-3xl">Grain2Gain</h1>
           </div>
+
+          {/* Navigation Links */}
           <nav className="hidden md:block">
             <ul className="flex space-x-8">
-              {['Home', 'About Us', 'Services', 'Contact'].map((item) => (
+              {["Home", "About Us", "Services", "Contact"].map((item) => (
                 <li key={item}>
-                  <a 
-                    href="#" 
-                    className={`font-medium relative after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 hover:after:w-full after:transition-all after:duration-300 ${isScrolled ? "text-gray-700 after:bg-emerald-600" : "text-white after:bg-white"}`}
+                  <a
+                    href="#"
+                    className="font-medium relative text-emerald-700 hover:text-emerald-900"
                   >
                     {item}
                   </a>
@@ -69,23 +83,22 @@ function WelcomePage() {
               ))}
             </ul>
           </nav>
-          <button 
-            className={`md:hidden text-2xl ${isScrolled ? "text-emerald-700" : "text-white"}`}
-            aria-label="Menu"
-          >
-            ☰
-          </button>
         </div>
       </header>
 
-      <section className={`pt-32 pb-20 px-4 transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+      {/* Welcome Section */}
+      <section className={`pt-32 pb-20 px-4 transition-opacity duration-1000 ${isVisible ? "opacity-100" : "opacity-0"}`}>
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {/* Left Text Section */}
             <div className="order-2 md:order-1 space-y-8 px-4">
               <div>
+                {/* Tagline */}
                 <div className="inline-block px-4 py-1 bg-emerald-100 text-emerald-700 rounded-full font-medium text-sm mb-4">
                   Sustainable Food Redistribution
                 </div>
+
+                {/* Main Heading */}
                 <h2 className="text-5xl md:text-6xl font-extrabold text-gray-800 leading-tight relative">
                   From Waste to
                   <span className="text-emerald-600 relative ml-3 inline-block">
@@ -93,13 +106,16 @@ function WelcomePage() {
                     <span className="absolute bottom-0 left-0 w-full h-2 bg-emerald-300 opacity-50 rounded-full -z-10"></span>
                   </span>
                 </h2>
+
+                {/* Description */}
                 <p className="text-xl text-gray-600 mb-6 leading-relaxed">
-                  Connect with our AI-powered platform that bridges surplus food providers 
-                  with communities in need, creating sustainable impact for everyone.
+                  Connect with our AI-powered platform that bridges surplus food providers with communities in need, creating sustainable impact for everyone.
                 </p>
               </div>
-              
+
+              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
+                {/* Join Button */}
                 <button
                   onClick={() => setIsModalOpen(true)}
                   className="relative bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-700 hover:to-green-600 text-white px-8 py-4 rounded-xl font-semibold shadow-lg group transition transform hover:-translate-y-1"
@@ -107,8 +123,10 @@ function WelcomePage() {
                   <span className="z-10 relative">Join the Movement</span>
                   <span className="absolute inset-0 bg-emerald-800 opacity-0 group-hover:opacity-10 rounded-xl transition-opacity"></span>
                 </button>
+
+                {/* Learn More Button */}
                 <button
-                  onClick={() => navigate('/learnMore')}
+                  onClick={() => navigate("/learnMore")}
                   className="group bg-white hover:bg-emerald-50 text-emerald-700 border-2 border-emerald-500 px-8 py-4 rounded-lg font-semibold transition duration-300 flex items-center justify-center"
                 >
                   Learn More
@@ -118,30 +136,36 @@ function WelcomePage() {
                 </button>
               </div>
             </div>
-            
+
+            {/* Right Image Section */}
             <div className="order-1 md:order-2 relative flex justify-center">
+              {/* Background Glow */}
               <div className="absolute -z-10 w-72 h-72 bg-gradient-to-r from-emerald-300 to-green-200 rounded-full filter blur-3xl opacity-50 transform translate-x-10 translate-y-10"></div>
+
+              {/* Main Image */}
               <div className="relative w-full max-w-md">
-                <img 
-                  src={welcomeImage} 
-                  alt="Grain2Gain" 
-                  className="relative z-10 rounded-2xl shadow-2xl w-full object-cover transform hover:scale-105 transition-transform duration-500" 
-                />
+                {/* <img
+                  src={welcomeImage} // Using the imported image
+                  alt="Grain2Gain"
+                  className="relative z-10 rounded-2xl shadow-2xl w-full object-cover transform hover:scale-105 transition-transform duration-500"
+                /> */}
               </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Modal for Selecting User Type */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-white/80 backdrop-blur-md rounded-2xl p-8 shadow-2xl max-w-sm w-full border border-gray-100 animate-scaleIn">
+            {/* Modal Header */}
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-2xl font-bold text-emerald-700">Join Grain2Gain</h3>
                 <p className="text-gray-500 mt-1">Select your role to get started</p>
               </div>
-              <button 
+              <button
                 onClick={() => setIsModalOpen(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
                 aria-label="Close modal"
@@ -152,11 +176,11 @@ function WelcomePage() {
               </button>
             </div>
 
-            <div className="flex flex-col gap-4 mb-6">
-              {[
-                { type: "Retailer", description: "List and donate surplus food" },
+            {/* Modal Buttons */}
+            <div className="flex flex-col gap-4">
+              {[{ type: "Retailer", description: "List and donate surplus food" },
                 { type: "NGO", description: "Claim and distribute donations" },
-                { type: "Farmer", description: "Share fresh produce directly" }
+                { type: "Farmer", description: "Share fresh produce directly" },
               ].map((item) => (
                 <button
                   key={item.type}
@@ -180,6 +204,6 @@ function WelcomePage() {
       )}
     </div>
   );
-}
+};
 
 export default WelcomePage;

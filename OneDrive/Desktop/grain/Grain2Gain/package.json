@@ -10,10 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "framer-motion": "^12.7.4",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
+    "lucide-react": "^0.501.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.5.2",
+    "recharts": "^2.15.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

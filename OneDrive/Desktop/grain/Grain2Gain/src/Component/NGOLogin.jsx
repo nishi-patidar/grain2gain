@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import apiRequest from ".././Component/utils/lib/apiRequest"; // adjust the path based on your folder structure
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
 function LoginPage() {
   const [formData, setFormData] = useState({
@@ -14,17 +14,13 @@ function LoginPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
   const validateForm = () => {
     const newErrors = {};
     if (!formData.email) newErrors.email = 'Email is required';
     if (!formData.password) newErrors.password = 'Password is required';
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -34,64 +30,68 @@ function LoginPage() {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-
     try {
-      const response = await apiRequest.post('ngo/login', formData);
+      const response = await axios.post('http://localhost:8000/ngo/login', formData);
       console.log('Login Success:', response.data);
-      navigate('/dashboard'); // Redirect to dashboard or home page after successful login
+
+      sessionStorage.setItem('user', JSON.stringify(response.data.user)); // Store user data in sessionStorage
+      navigate('/ngo-dashboard'); // ✅ Redirect to NGO Dashboard
     } catch (error) {
       console.error('Login Error:', error.response?.data || error.message);
-      alert('An error occurred during login. Please check your credentials and try again.');
+      alert('Login failed. Please check your email and password.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 via-white to-emerald-50 py-16">
-      <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg">
-        <h2 className="text-3xl font-extrabold text-center text-emerald-600 mb-8">
-          NGO Login
-        </h2>
+    <div className="min-h-screen bg-gradient-to-b from-green-50 via-white to-emerald-50 py-16 flex items-center justify-center">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+        <h2 className="text-3xl font-bold text-center text-emerald-600 mb-6">NGO Login</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="email" className="block text-lg font-medium text-gray-700">Email</label>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
               type="email"
-              id="email"
               name="email"
+              id="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
               placeholder="Enter your email"
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+            {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-lg font-medium text-gray-700">Password</label>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
             <input
               type="password"
-              id="password"
               name="password"
+              id="password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
               placeholder="Enter your password"
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+            {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
           </div>
 
-          <div className="text-center">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold rounded-lg hover:from-emerald-600 hover:to-green-700 transition duration-300 disabled:opacity-50"
-            >
-              {isSubmitting ? 'Logging in...' : 'Log In'}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white font-semibold py-3 rounded-lg hover:from-emerald-600 hover:to-green-700 transition duration-300 disabled:opacity-50"
+          >
+            {isSubmitting ? 'Logging in...' : 'Log In'}
+          </button>
+
+          <p className="text-center text-sm text-gray-600 mt-4">
+            Don't have an account?{' '}
+            <Link to="/ngosignUp" className="text-emerald-600 font-medium hover:underline">
+              Sign Up
+            </Link>
+          </p>
         </form>
       </div>
     </div>

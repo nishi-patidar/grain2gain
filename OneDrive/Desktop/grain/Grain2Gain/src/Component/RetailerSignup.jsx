@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 
 export default function RetailerSignUpPage() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     storeName: '',
     contactPerson: '',
@@ -52,6 +52,10 @@ export default function RetailerSignUpPage() {
     });
   };
 
+  const goToSignIn = () => {
+    navigate('/retailerSignIn');
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-green-200 to-green-50 p-4 sm:p-6">
       <div className="w-full max-w-2xl bg-white shadow-xl rounded-3xl p-8 sm:p-10">
@@ -80,6 +84,16 @@ export default function RetailerSignUpPage() {
             Sign Up
           </button>
         </form>
+        
+        <div className="mt-6 text-center">
+          <p className="text-gray-600">Already have an account?</p>
+          <button 
+            onClick={goToSignIn}
+            className="mt-2 text-green-600 hover:text-green-800 font-medium"
+          >
+            Sign In to your account
+          </button>
+        </div>
       </div>
     </div>
   );
